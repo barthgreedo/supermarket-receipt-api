@@ -21,3 +21,6 @@ jobs:
         with:
           python-version: "3.13"
           enable-cache: false
+
+      - name: "Installer les dépendances"
+        run: "uv sync --locked"
