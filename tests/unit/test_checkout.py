@@ -64,7 +64,7 @@ def test_percentage_discount_nominal(
 def test_validate_quantity_valeur_normale():
 
     # Cas nominal : quantité positive
-    assert validate_quantity(5) == 6
+    assert validate_quantity(5) == 5
 
 
 def test_validate_quantity_valeur_zero():
