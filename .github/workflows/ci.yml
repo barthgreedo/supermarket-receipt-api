@@ -24,3 +24,9 @@ jobs:
 
       - name: "Installer les dépendances"
         run: "uv sync --locked"
+
+      - name: "Lint"
+        run: "uv run ruff check ."
+
+      - name: "Vérifier le formatage"
+        run: "uv run ruff format --check ."
