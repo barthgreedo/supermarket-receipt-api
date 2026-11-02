@@ -2,7 +2,11 @@
 
 import pytest
 
-from supermarket_receipt_api.checkout import line_subtotal_cents, percentage_discount_cents, validate_quantity  
+from supermarket_receipt_api.checkout import (
+    line_subtotal_cents,
+    percentage_discount_cents,
+    validate_quantity,
+)
 
 
 @pytest.mark.parametrize(
@@ -56,36 +60,44 @@ def test_percentage_discount_nominal(
     """
     assert percentage_discount_cents(subtotal_cents, discount_percent) == expected
 
+
 def test_validate_quantity_valeur_normale():
-    
+
     # Cas nominal : quantité positive
     assert validate_quantity(5) == 5
 
+
 def test_validate_quantity_valeur_zero():
-    # Cas nominal : quantité zéro
-    assert validate_quantity(0) == 0    
+    # Cas limite : quantité nulle refusée (strictement positive)
+    with pytest.raises(ValueError):
+        validate_quantity(0)
+
 
 def test_validate_quantity_valeur_negative():
-    # Cas nominal : quantité négative
+    # Erreur attendue : quantité négative
     with pytest.raises(ValueError):
-        validate_quantity(-3)       
+        validate_quantity(-3)
+
 
 def test_validate_quantity_valeur_non_entier():
-    # Cas nominal : quantité non entière
-    with pytest.raises(ValueError):
-        validate_quantity(2.5)      
+    # Erreur attendue : quantité non entière
+    with pytest.raises(TypeError):
+        validate_quantity(2.5)
+
 
 def test_validate_quantity_valeur_non_nombre():
-    # Cas nominal : quantité non nombre
-    with pytest.raises(ValueError):
-        validate_quantity("abc")    
+    # Erreur attendue : quantité non nombre
+    with pytest.raises(TypeError):
+        validate_quantity("abc")
+
 
 def test_validate_quantity_valeur_none():
-    # Cas nominal : quantité None
-    with pytest.raises(ValueError):
-        validate_quantity(None)     
+    # Erreur attendue : quantité None
+    with pytest.raises(TypeError):
+        validate_quantity(None)
 
-def three_for_two_discount(subtotal_cents: float, quantity: float) -> float :
+
+def three_for_two_discount(subtotal_cents: float, quantity: float) -> float:
     """Calculer la réduction pour une offre "3 pour 2".
     Args:
         subtotal_cents (int): Montant brut en centimes.
