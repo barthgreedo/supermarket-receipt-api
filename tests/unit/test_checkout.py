@@ -2,7 +2,7 @@
 
 import pytest
 
-from supermarket_receipt_api.checkout import line_subtotal_cents, percentage_discount_cents
+from supermarket_receipt_api.checkout import line_subtotal_cents, percentage_discount_cents, validate_quantity  
 
 
 @pytest.mark.parametrize(
@@ -55,3 +55,50 @@ def test_percentage_discount_nominal(
         AssertionError: Si la réduction calculée diffère de expected.
     """
     assert percentage_discount_cents(subtotal_cents, discount_percent) == expected
+
+def test_validate_quantity_valeur_normale():
+    
+    # Cas nominal : quantité positive
+    assert validate_quantity(5) == 5
+
+def test_validate_quantity_valeur_zero():
+    # Cas nominal : quantité zéro
+    assert validate_quantity(0) == 0    
+
+def test_validate_quantity_valeur_negative():
+    # Cas nominal : quantité négative
+    with pytest.raises(ValueError):
+        validate_quantity(-3)       
+
+def test_validate_quantity_valeur_non_entier():
+    # Cas nominal : quantité non entière
+    with pytest.raises(ValueError):
+        validate_quantity(2.5)      
+
+def test_validate_quantity_valeur_non_nombre():
+    # Cas nominal : quantité non nombre
+    with pytest.raises(ValueError):
+        validate_quantity("abc")    
+
+def test_validate_quantity_valeur_none():
+    # Cas nominal : quantité None
+    with pytest.raises(ValueError):
+        validate_quantity(None)     
+
+def three_for_two_discount(subtotal_cents: float, quantity: float) -> float :
+    """Calculer la réduction pour une offre "3 pour 2".
+    Args:
+        subtotal_cents (int): Montant brut en centimes.
+        quantity (int): Quantité de produits achetés.
+
+    Returns:
+        int: Montant de la réduction en centimes.
+    """
+    if quantity < 3:
+        return 0
+    # Calculer combien de groupes de 3 produits sont présents
+    groups_of_three = quantity // 3
+    # Chaque groupe de 3 donne droit à un produit gratuit
+    discount_per_group = subtotal_cents // quantity  # Prix d'un produit
+    total_discount = groups_of_three * discount_per_group
+    return total_discount
