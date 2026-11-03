@@ -11,9 +11,19 @@ permissions:
 
 jobs:
   ci:
-    name: "CI à compléter"
+    name: "${{ matrix.check }}"
     runs-on: "ubuntu-latest"
     timeout-minutes: 5
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - check: "Lint"
+            command: "uv run ruff check ."
+          - check: "Format"
+            command: "uv run ruff format --check ."
+          - check: "Tests"
+            command: "uv run pytest tests -v --cov=supermarket_receipt_api.checkout --cov-report=term-missing"
     steps:
       - name: "Récupérer le code"
         uses: "actions/checkout@v7.0.1"
@@ -29,11 +39,5 @@ jobs:
       - name: "Installer les dépendances"
         run: "uv sync --locked"
 
-      - name: "Lint"
-        run: "uv run ruff check ."
-
-      - name: "Vérifier le formatage"
-        run: "uv run ruff format --check ."
-
-      - name: "Tests unitaires et d'intégration, avec couverture"
-        run: "uv run pytest tests -v --cov=supermarket_receipt_api.checkout --cov-report=term-missing"
+      - name: "${{ matrix.check }}"
+        run: "${{ matrix.command }}"
