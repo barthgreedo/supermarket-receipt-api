@@ -202,7 +202,7 @@ def three_for_two_discount_cents(unit_price_cents: int, quantity: int) -> int:
         ValueError: Si le prix est négatif ou la quantité n'est pas strictement positive.
     """
     line_subtotal_cents(unit_price_cents, quantity, "piece")
-    if quantity > 3:
+    if quantity >= 3:
         return (quantity // 3) * unit_price_cents
     return 0
 

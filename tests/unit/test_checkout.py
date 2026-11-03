@@ -5,6 +5,7 @@ import pytest
 from supermarket_receipt_api.checkout import (
     line_subtotal_cents,
     percentage_discount_cents,
+    three_for_two_discount_cents,
     validate_quantity,
 )
 
@@ -59,6 +60,28 @@ def test_percentage_discount_nominal(
         AssertionError: Si la réduction calculée diffère de expected.
     """
     assert percentage_discount_cents(subtotal_cents, discount_percent) == expected
+
+
+@pytest.mark.parametrize(
+    "quantity, expected",
+    [(2, 0), (3, 99), (4, 99), (6, 198)],
+)
+def test_three_for_two_discount(quantity: int, expected: int) -> None:
+    """Vérifier la réduction 3 pour 2 autour de la borne du premier groupe.
+
+    Régression : avec exactement trois pièces, une pièce doit être offerte.
+
+    Args:
+        quantity (int): Nombre de brosses à dents à 99 centimes fourni par pytest.
+        expected (int): Réduction attendue : 99 centimes par groupe complet de trois.
+
+    Returns:
+        None: Le test réussit si la réduction calculée correspond à l'attendu.
+
+    Raises:
+        AssertionError: Si la réduction calculée diffère de expected.
+    """
+    assert three_for_two_discount_cents(99, quantity) == expected
 
 
 def test_validate_quantity_valeur_normale():
