@@ -35,8 +35,5 @@ jobs:
       - name: "Vérifier le formatage"
         run: "uv run ruff format --check ."
 
-      - name: "Tests unitaires et couverture"
-        run: "uv run pytest tests/unit --cov=supermarket_receipt_api.checkout --cov-report=term-missing"
-
-      - name: "Tests d'intégration HTTP"
-        run: "uv run pytest tests/integration -v"
+      - name: "Tests unitaires et d'intégration, avec couverture"
+        run: "uv run pytest tests -v --cov=supermarket_receipt_api.checkout --cov-report=term-missing"
