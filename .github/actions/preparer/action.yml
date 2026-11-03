@@ -1,0 +1,15 @@
+name: "Préparer l'environnement"
+description: "Installer Python 3.13 et uv avec cache, puis les dépendances verrouillées de uv.lock."
+
+runs:
+  using: "composite"
+  steps:
+    - name: "Installer Python et uv"
+      uses: "astral-sh/setup-uv@v10.2.0"
+      with:
+        python-version: "3.13"
+        enable-cache: true
+
+    - name: "Installer les dépendances"
+      shell: "bash"
+      run: "uv sync --locked"
